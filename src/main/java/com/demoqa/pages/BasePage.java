@@ -1,6 +1,7 @@
 package com.demoqa.pages;
 
 import org.openqa.selenium.JavascriptExecutor;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
@@ -33,8 +34,7 @@ public class BasePage {
         }
     }
 
-    public void clickWithJS(WebElement element, int x, int y)
-    {
+    public void clickWithJS(WebElement element, int x, int y) {
         moveWithJS(x, y);
         click(element);
     }
@@ -42,24 +42,45 @@ public class BasePage {
     public void moveWithJS(int x, int y) {
         js.executeScript("window.scrollBy(" + x + "," + y + ")");
     }
-    public void typeWithJS(WebElement element,String text,int x, int y){
-        moveWithJS(x,y);
-        type(element,text);
+
+    public void typeWithJS(WebElement element, String text, int x, int y) {
+        moveWithJS(x, y);
+        type(element, text);
     }
 
     protected boolean shouldHaveText(WebElement element, String text, int time) {
         return new WebDriverWait(driver, Duration.ofSeconds(time))
-                .until(ExpectedConditions.textToBePresentInElement(element,text));
+                .until(ExpectedConditions.textToBePresentInElement(element, text));
     }
 
-    public void hideAd(){
+    public void hideAd() {
         js.executeScript("document.getElementById('fixedban').style.display='none';");
     }
-    public void hideFooter(){
+
+    public void hideFooter() {
         js.executeScript("document.querySelector('footer').style.display='none';");
     }
-    public void  hideIframes(){
+
+    public void hideIframes() {
         hideAd();
         hideFooter();
+    }
+
+    public void pause(int millis) {
+        try {
+            Thread.sleep(millis);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public boolean isElementDisplayed(WebElement element){
+        try {
+            element.isDisplayed();
+            return true;
+        }catch (NoSuchElementException ex){
+            ex.getMessage();
+            return false;
+        }
     }
 }
